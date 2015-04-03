@@ -2,7 +2,7 @@ from behave import *
 
 @when("the user requests {url}")
 def step_impl(context, url):
-    context.rv = context.request('get', url)
+    context.rv = context.request(url)
 
 
 @then("{code:d} error should be returned")
