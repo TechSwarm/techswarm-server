@@ -7,7 +7,8 @@ import tsserver
 
 
 def before_scenario(context, scenario):
-    context.db_fd, tsserver.app.config['DATABASE'] = tempfile.mkstemp()
+    context.db_fd, context.db_url = tempfile.mkstemp()
+    tsserver.app.config['DATABASE'] = 'sqlite:///' + context.db_url
     tsserver.app.config['TESTING'] = True
     context.app = tsserver.app.test_client()
 
@@ -24,9 +25,9 @@ def before_scenario(context, scenario):
         return rv
 
     context.request = request
-    tsserver.init_db()
+    tsserver.init()
 
 
 def after_scenario(context, scenario):
     os.close(context.db_fd)
-    os.unlink(tsserver.app.config['DATABASE'])
+    os.unlink(context.db_url)
