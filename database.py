@@ -5,6 +5,9 @@ from sqlalchemy.ext.declarative import declarative_base
 import tsserver
 
 
+# Values to these globals are set in connect_db(), since database config
+# is read from app config (which can be changed after importing this file,
+# but before actually doing anything with the database)
 engine = None
 Base = None
 
@@ -14,11 +17,8 @@ def connect_db():
     if engine is not None:
         return
 
-    # See: http://docs.sqlalchemy.org/en/latest/core/engines.html
-    # URL Format: dialect+driver://username:password@host:port/database
-    # OR SQLite: sqlite://<nohostname>/<path>
-    engine = create_engine(tsserver.app.config['DATABASE'],
-                           convert_unicode=True)
+    engine = create_engine(tsserver.app.config['DATABASE_URL'],
+                           **tsserver.app.config['DATABASE_SETTINGS'])
     db_session = scoped_session(sessionmaker(autocommit=False,
                                              autoflush=False,
                                              bind=engine))
