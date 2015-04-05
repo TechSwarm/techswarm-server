@@ -3,13 +3,14 @@ import tempfile
 
 from flask import json
 
-import tsserver
+import config
 
 
 def before_scenario(context, scenario):
     context.db_fd, context.db_url = tempfile.mkstemp()
-    tsserver.app.config['SQLALCHEMY_DATABASE_URI'] = \
-        'sqlite:///' + context.db_url
+    config.SQLALCHEMY_DATABASE_URI = 'sqlite:///' + context.db_url
+    import tsserver
+
     tsserver.app.config['TESTING'] = True
     context.app = tsserver.app.test_client()
 
@@ -26,7 +27,6 @@ def before_scenario(context, scenario):
         return rv
 
     context.request = request
-    tsserver.init()
 
 
 def after_scenario(context, scenario):
