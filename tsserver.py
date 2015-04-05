@@ -1,16 +1,18 @@
 from flask import Flask, jsonify, make_response
-
-import database
+from flask.ext.sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
 app.config.from_object('config')
+db = SQLAlchemy()
 
 
 @app.before_request
 def init():
-    database.connect_db()
-    database.init_db()
+    # Database is initialized here, since database config can be changed
+    # after importing this file (such as in testing), but before actually doing
+    # anything with the database
+    db.init_app(app)
 
 
 @app.route("/")

@@ -8,7 +8,8 @@ import tsserver
 
 def before_scenario(context, scenario):
     context.db_fd, context.db_url = tempfile.mkstemp()
-    tsserver.app.config['DATABASE_URL'] = 'sqlite:///' + context.db_url
+    tsserver.app.config['SQLALCHEMY_DATABASE_URI'] = \
+        'sqlite:///' + context.db_url
     tsserver.app.config['TESTING'] = True
     context.app = tsserver.app.test_client()
 
