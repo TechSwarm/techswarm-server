@@ -1,5 +1,7 @@
-from flask import Flask, jsonify, make_response
+from flask import Flask, make_response
 from flask.ext.sqlalchemy import SQLAlchemy
+
+from workarounds import jsonify
 
 
 app = Flask(__name__)
