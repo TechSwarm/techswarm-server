@@ -18,9 +18,9 @@ TechSwarm Ground Station Server uses [behave](http://pythonhosted.org/behave/) B
 All packages required by the server to be tested can be installed using:
 
 ```
-pip install -r requirements-test.txt
+pip install -r requirements-testing.txt
 ```
 
 Then, ```behave``` can be started in server root directory (the one with `tsserver.py`).
 
-Tests use temporary SQLite database (stored in a file returned by `tempfile.mkstemp()` function.
+Tests use in-memory SQLite database by default. There is also an option to use temporary database file instead - see `features/environment.py` for that.
