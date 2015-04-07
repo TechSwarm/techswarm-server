@@ -1,4 +1,5 @@
 from behave import *
+from flask import json
 
 
 @when("I request {url}")
@@ -14,3 +15,9 @@ def step_impl(context, code):
 @then('"{key}" key in returned JSON data should contain text "{text}"')
 def step_impl(context, key, text):
     assert context.rv.json_data[key] == text
+
+
+@then("following JSON data should be sent")
+def step_impl(context):
+    assert context.rv.json_data == json.loads(context.text)
+
