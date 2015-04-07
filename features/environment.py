@@ -3,15 +3,27 @@ import tempfile
 
 from flask import json
 
-import config
+import tsserver
+
+
+# If set to True, each time the test is run, new database is created as a
+# temporary file. If the value is equal to False, tests will be using SQLite
+# in-memory database.
+USE_DB_TEMP_FILE = False
 
 
 def before_scenario(context, scenario):
-    context.db_fd, context.db_url = tempfile.mkstemp()
-    config.SQLALCHEMY_DATABASE_URI = 'sqlite:///' + context.db_url
-    import tsserver
+    if USE_DB_TEMP_FILE:
+        context.db_fd, context.db_url = tempfile.mkstemp()
+        db_url = 'sqlite:///' + context.db_url
+    else:
+        db_url = 'sqlite://'
+    tsserver.app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+    # Ensure the tests are actually run in temporary database
+    assert str(tsserver.db.engine.url) == db_url
 
     tsserver.app.config['TESTING'] = True
+    tsserver.db.create_all()
     context.app = tsserver.app.test_client()
 
     def request(url, method='GET'):
@@ -30,5 +42,6 @@ def before_scenario(context, scenario):
 
 
 def after_scenario(context, scenario):
-    os.close(context.db_fd)
-    os.unlink(context.db_url)
+    if USE_DB_TEMP_FILE:
+        os.close(context.db_fd)
+        os.unlink(context.db_url)
