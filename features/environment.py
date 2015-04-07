@@ -42,6 +42,8 @@ def before_scenario(context, scenario):
 
 
 def after_scenario(context, scenario):
+    tsserver.db.session.remove()
+    tsserver.db.drop_all()
     if USE_DB_TEMP_FILE:
         os.close(context.db_fd)
         os.unlink(context.db_url)
