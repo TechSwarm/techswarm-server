@@ -26,7 +26,7 @@ def before_scenario(context, scenario):
     tsserver.db.create_all()
     context.app = tsserver.app.test_client()
 
-    def request(url, method='GET'):
+    def request(url, method='GET', *args, **kwargs):
         """
         Wrapper over Flask.open function that parses returned data as JSON
 
@@ -34,7 +34,7 @@ def before_scenario(context, scenario):
         :param url: URL to retrieve
         :return: Response object
         """
-        rv = context.app.open(url, method=method)
+        rv = context.app.open(url, method=method, *args, **kwargs)
         rv.json_data = json.loads(rv.data)
         return rv
 
