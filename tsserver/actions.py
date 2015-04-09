@@ -2,10 +2,12 @@ from flask.ext.restful import Resource
 from flask.ext.restful import reqparse
 
 from tsserver import models, db, api
+from tsserver.dtutils import timestamp
 
 
 class Telemetry(Resource):
     parser = reqparse.RequestParser()
+    parser.add_argument('timestamp', type=timestamp, required=True)
     parser.add_argument('temperature', type=float, required=True)
     parser.add_argument('pressure', type=float, required=True)
 

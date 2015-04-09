@@ -2,16 +2,18 @@ Feature: Telemetry
 
   Scenario: Getting telemetry data
     Given following telemetry data
-      | temperature | pressure |
-      | 23.6        | 1000     |
-      | 24.0        | 1100     |
+      | timestamp                  | temperature | pressure |
+      | 1970-01-01T00:00:00.000000 | 23.6        | 1000     |
+      | 2015-04-01T18:53:51.612235 | 24.0        | 1100     |
     When I request /telemetry
     Then 200 status code should be returned
     And following JSON data should be sent
     """
     [
-      {"temperature": 23.6, "pressure": 1000},
-      {"temperature": 24.0, "pressure": 1100}
+      {"timestamp": "1970-01-01T00:00:00.000000", "temperature": 23.6,
+      "pressure": 1000},
+      {"timestamp": "2015-04-01T18:53:51.612235", "temperature": 24.0,
+      "pressure": 1100}
     ]
     """
 
@@ -26,5 +28,6 @@ Feature: Telemetry
 
   Examples: Parameters
     | parameter   |
+    | timestamp   |
     | temperature |
     | pressure    |

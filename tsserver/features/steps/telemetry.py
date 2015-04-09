@@ -1,9 +1,13 @@
+from datetime import datetime
+
 from behave import *
 
 from tsserver import db, models
+from tsserver.dtutils import datetime_from_str, datetime_to_str
 
 
 example_telemetry_data = {
+    'timestamp': datetime_to_str(datetime(1970, 1, 1)),
     'temperature': 23.6,
     'pressure': 1000
 }
@@ -31,6 +35,9 @@ def step_impl(context, parameter):
 @given("following telemetry data")
 def step_impl(context):
     for row in context.table:
-        x = models.Telemetry(**row.as_dict())
+        d = dict(
+            (x, (datetime_from_str(y) if x == 'timestamp' else y)) for x, y in
+            row.as_dict().items())
+        x = models.Telemetry(**d)
         db.session.add(x)
     db.session.commit()

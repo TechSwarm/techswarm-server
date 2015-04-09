@@ -1,5 +1,5 @@
-from datetime import datetime
 from tsserver import db
+from tsserver.dtutils import datetime_to_str
 
 
 class Telemetry(db.Model):
@@ -13,11 +13,12 @@ class Telemetry(db.Model):
     temperature = db.Column(db.Float)
     pressure = db.Column(db.Float)
 
-    def __init__(self, temperature, pressure, timestamp=datetime.now()):
+    def __init__(self, timestamp, temperature, pressure):
         self.timestamp = timestamp
         self.temperature = temperature
         self.pressure = pressure
 
     def as_dict(self):
-        return {'temperature': self.temperature,
+        return {'timestamp': datetime_to_str(self.timestamp),
+                'temperature': self.temperature,
                 'pressure': self.pressure}
