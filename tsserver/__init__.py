@@ -8,7 +8,7 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 api = Api(app)
 
-import models
+from tsserver import models
 
 
 class Telemetry(Resource):
@@ -33,7 +33,3 @@ api.add_resource(Telemetry, '/telemetry')
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': "Not found"}), 404)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

@@ -1,7 +1,6 @@
 from behave import *
 
-import models
-from tsserver import db
+from tsserver import db, models
 
 
 example_telemetry_data = {
