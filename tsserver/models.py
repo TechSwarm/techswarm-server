@@ -8,8 +8,7 @@ class Telemetry(db.Model):
     (every second or so).
     """
 
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime)
+    timestamp = db.Column(db.DateTime, primary_key=True)
     temperature = db.Column(db.Float)
     pressure = db.Column(db.Float)
 
