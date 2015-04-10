@@ -19,5 +19,12 @@ def step_impl(context, key, text):
 
 @then("following JSON data should be sent")
 def step_impl(context):
-    assert context.rv.json_data == json.loads(context.text)
+    # In case of "the same JSON data should be sent" step being used
+    # further, save last JSON data here
+    context.last_json_data = json.loads(context.text)
+    assert context.rv.json_data == context.last_json_data
 
+
+@then("the same JSON data should be sent")
+def step_impl(context):
+    assert context.rv.json_data == context.last_json_data
