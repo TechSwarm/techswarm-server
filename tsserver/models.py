@@ -10,7 +10,9 @@ class Telemetry(db.Model):
 
     timestamp = db.Column(db.DateTime, primary_key=True)
     temperature = db.Column(db.Float)
+    """Temperature in Celsius."""
     pressure = db.Column(db.Float)
+    """Air pressure in hPa."""
 
     def __init__(self, timestamp, temperature, pressure):
         self.timestamp = timestamp
