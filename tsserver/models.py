@@ -14,11 +14,6 @@ class Telemetry(db.Model):
     pressure = db.Column(db.Float)
     """Air pressure in hPa."""
 
-    def __init__(self, timestamp, temperature, pressure):
-        self.timestamp = timestamp
-        self.temperature = temperature
-        self.pressure = pressure
-
     def as_dict(self):
         return {'timestamp': datetime_to_str(self.timestamp),
                 'temperature': self.temperature,
