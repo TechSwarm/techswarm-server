@@ -5,11 +5,12 @@ import shutil
 
 from behave import *
 
-from tsserver import db, models, configutils
+from tsserver import db, configutils
 from tsserver.dtutils import datetime_to_str
 from tsserver.features.testutils import (
     open_resource, resource_path, parse_data_table_row
 )
+from tsserver.photos.models import Photo
 
 
 @given("test photos in upload directory")
@@ -24,7 +25,7 @@ def step_impl(context):
 def step_impl(context):
     for row in context.table:
         d = parse_data_table_row(row)
-        x = models.Photo(**d)
+        x = Photo(**d)
         db.session.add(x)
     db.session.commit()
 

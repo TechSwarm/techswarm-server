@@ -2,8 +2,9 @@ from datetime import datetime
 
 from behave import *
 
-from tsserver import db, models
+from tsserver import db
 from tsserver.dtutils import datetime_from_str, datetime_to_str
+from tsserver.telemetry.models import Telemetry
 
 
 example_telemetry_data = {
@@ -21,8 +22,8 @@ def step_impl(context):
 
 @then("example telemetry data should be saved to the database")
 def step_impl(context):
-    assert models.Telemetry.query.count() == 1
-    assert models.Telemetry.query.all()[0].as_dict() == example_telemetry_data
+    assert Telemetry.query.count() == 1
+    assert Telemetry.query.all()[0].as_dict() == example_telemetry_data
 
 
 @when("I POST example telemetry data without {parameter}")
@@ -38,6 +39,6 @@ def step_impl(context):
         d = dict(
             (x, (datetime_from_str(y) if x == 'timestamp' else y)) for x, y in
             row.as_dict().items())
-        x = models.Telemetry(**d)
+        x = Telemetry(**d)
         db.session.add(x)
     db.session.commit()
