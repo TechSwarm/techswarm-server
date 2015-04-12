@@ -37,10 +37,10 @@ Feature: Photos
     Then 400 status code should be returned
       And "error" key in returned JSON data should contain text "File extension is not allowed!"
 
-  Examples:
-    | extension |
-    | php       |
-    | exe       |
-    | py        |
-    | rb        |
-    | sh        |
+    Examples:
+      | extension |
+      | php       |
+      | exe       |
+      | py        |
+      | rb        |
+      | sh        |

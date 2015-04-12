@@ -45,8 +45,8 @@ Feature: Telemetry
     When I POST example telemetry data without <parameter>
     Then 400 status code should be returned
 
-  Examples: Parameters
-    | parameter   |
-    | timestamp   |
-    | temperature |
-    | pressure    |
+    Examples:
+      | parameter   |
+      | timestamp   |
+      | temperature |
+      | pressure    |
