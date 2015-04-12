@@ -3,7 +3,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.restful import Api
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../files')
 app.config.from_object('config')
 db = SQLAlchemy(app)
 api = Api(app)

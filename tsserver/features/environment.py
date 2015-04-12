@@ -4,6 +4,8 @@ import tempfile
 from flask import json
 
 import tsserver
+from tsserver import configutils
+
 
 
 # If set to True, each time the test is run, new database is created as a
@@ -41,9 +43,25 @@ def before_scenario(context, scenario):
     context.request = request
 
 
+def remove_uploaded(filename):
+    path = os.path.join(configutils.get_upload_dir(), filename)
+    if os.path.isfile(path):
+        os.remove(path)
+
+
 def after_scenario(context, scenario):
     tsserver.db.session.remove()
     tsserver.db.drop_all()
     if USE_DB_TEMP_FILE:
         os.close(context.db_fd)
         os.unlink(context.db_url)
+
+    # If test photo was uploaded, remove it
+    if 'test_photo_url' in context:
+        remove_uploaded(context.test_photo_url)
+
+
+def after_all(context):
+    # Remove uploaded images
+    remove_uploaded('test001.jpg')
+    remove_uploaded('test002.jpg')

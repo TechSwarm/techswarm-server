@@ -2,7 +2,7 @@ from behave import *
 from flask import json
 
 
-@when("I request {url}")
+@when("I request {url:S}")
 def step_impl(context, url):
     context.rv = context.request(url)
 
@@ -28,3 +28,8 @@ def step_impl(context):
 @then("the same JSON data should be sent")
 def step_impl(context):
     assert context.rv.json_data == context.last_json_data
+
+
+@step('{header} header should be equal to "{value}"')
+def step_impl(context, header, value):
+    assert context.rv.headers[header] == value
