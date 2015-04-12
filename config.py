@@ -1,3 +1,6 @@
+# Please note that relative paths are relative to 'app root' directory,
+# i.e. tsserver/, not the one with runserver.py
+
 # URL Format: dialect+driver://username:password@host:port/database
 # SQLite:     sqlite://<nohostname>/<path>
 # See: http://docs.sqlalchemy.org/en/latest/core/engines.html
