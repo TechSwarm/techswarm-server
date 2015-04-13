@@ -5,3 +5,4 @@ from tsserver.telemetry.api import Telemetry
 
 api.add_resource(Telemetry, '/telemetry')
 api.add_resource(Photos, '/photos')
+api.add_resource(Photos.Panorama, '/panorama')

@@ -13,6 +13,9 @@ from tsserver.features.testutils import (
 from tsserver.photos.models import Photo
 
 
+PHOTO_DETAIL_KEYS = {'id', 'filename', 'isPanorama', 'url', 'timestamp'}
+
+
 @given("test photos in upload directory")
 def step_impl(context):
     src = os.path.join(resource_path(), 'deathvalley.jpg')
@@ -34,8 +37,7 @@ def step_impl(context):
 @then("list of {num:d} objects with image details should be sent")
 def step_impl(context, num):
     assert len(context.rv.json_data) == num
-    assert all({'id', 'filename', 'url', 'timestamp'} == set(x)
-               for x in context.rv.json_data)
+    assert all(PHOTO_DETAIL_KEYS == set(x) for x in context.rv.json_data)
 
 
 @when("I upload an image to {url}")
@@ -46,11 +48,21 @@ def step_impl(context, url):
     context.rv = context.request(url, 'POST', data=data)
 
 
+@when("I upload a panorama via PUT to {url}")
+def step_impl(context, url):
+    data = {'timestamp': datetime_to_str(datetime.now()),
+            'photo': (open_resource('deathvalley.jpg', mode='rb'),
+                      'TEST_ONLY_deathvalley.jpg')}
+    context.rv = context.request(url, 'PUT', data=data)
+
+
 @then("JSON with image details should be sent")
 def step_impl(context):
-    assert {'id', 'filename', 'url', 'timestamp'} == set(context.rv.json_data)
+    assert PHOTO_DETAIL_KEYS == set(context.rv.json_data)
     # Save the photo filename so it can be later removed
     context.test_photo_url = context.rv.json_data['filename']
+    # For "Then the same JSON data should be sent" step
+    context.last_json_data = context.rv.json_data
 
 
 @when('I request file from "{key}" key')

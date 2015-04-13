@@ -35,7 +35,7 @@ Feature: Photos
   Scenario Outline: Uploading a file with dangerous extension
     When I upload a file with '<extension>' extension to /photos
     Then 400 status code should be returned
-      And "error" key in JSON data should be equal to "File extension is not allowed!"
+      And "message" key in JSON data should be equal to "File extension is not allowed!"
 
     Examples:
       | extension |

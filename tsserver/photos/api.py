@@ -15,10 +15,12 @@ class Photos(Resource):
 
     postparser = reqparse.RequestParser()
     postparser.add_argument('timestamp', type=timestamp, required=True)
+    postparser.add_argument('is_panorama', type=bool, default=False)
     postparser.add_argument('photo', type=FileStorage, location='files',
                             required=True)
 
-    def allowed_file(self, filename):
+    @staticmethod
+    def allowed_file(filename):
         allowed_exts = app.config['PHOTOS_ALLOWED_EXTENSIONS']
         return '.' in filename and filename.rsplit('.', 1)[1] in allowed_exts
 
@@ -30,13 +32,12 @@ class Photos(Resource):
         return [x.as_dict() for x in
                 models.Photo.query.filter(*filter_args).all()]
 
-    def post(self):
-        args = self.postparser.parse_args()
-        f = args['photo']
-        if not f or not self.allowed_file(f.filename):
-            return {'error': "File extension is not allowed!"}, 400
+    @staticmethod
+    def upload_photo(f, timestamp, is_panorama):
+        if not f or not Photos.allowed_file(f.filename):
+            return {'message': "File extension is not allowed!"}, 400
 
-        x = models.Photo(timestamp=args['timestamp'])
+        x = models.Photo(timestamp=timestamp, is_panorama=is_panorama)
         db.session.add(x)
         db.session.commit()
 
@@ -49,3 +50,19 @@ class Photos(Resource):
         x.filename = filename
         db.session.commit()
         return x.as_dict(), 201
+
+    def post(self):
+        args = self.postparser.parse_args()
+        return self.upload_photo(args['photo'], args['timestamp'],
+                                 args['is_panorama'])
+
+    class Panorama(Resource):
+        def get(self):
+            panorama = (models.Photo.query
+                        .filter_by(is_panorama=True)
+                        .order_by(models.Photo.timestamp.desc()).first_or_404())
+            return panorama.as_dict()
+
+        def put(self):
+            args = Photos.postparser.parse_args()
+            return Photos.upload_photo(args['photo'], args['timestamp'], True)
