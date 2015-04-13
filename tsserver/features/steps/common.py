@@ -12,9 +12,9 @@ def step_impl(context, code):
     assert context.rv.status_code == code
 
 
-@then('"{key}" key in returned JSON data should contain text "{text}"')
+@then('"{key}" key in JSON data should be equal to "{text}"')
 def step_impl(context, key, text):
-    assert context.rv.json_data[key] == text
+    assert str(context.rv.json_data[key]) == text
 
 
 @then("following JSON data should be sent")
