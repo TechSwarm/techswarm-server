@@ -19,11 +19,6 @@ class Photos(Resource):
     postparser.add_argument('photo', type=FileStorage, location='files',
                             required=True)
 
-    @staticmethod
-    def allowed_file(filename):
-        allowed_exts = app.config['PHOTOS_ALLOWED_EXTENSIONS']
-        return '.' in filename and filename.rsplit('.', 1)[1] in allowed_exts
-
     def get(self):
         args = self.getparser.parse_args()
         filter_args = []
@@ -32,9 +27,14 @@ class Photos(Resource):
         return [x.as_dict() for x in
                 models.Photo.query.filter(*filter_args).all()]
 
+    def post(self):
+        args = self.postparser.parse_args()
+        return self.upload_photo(args['photo'], args['timestamp'],
+                                 args['is_panorama'])
+
     @staticmethod
     def upload_photo(f, timestamp, is_panorama):
-        if not f or not Photos.allowed_file(f.filename):
+        if not f or not Photos._allowed_file(f.filename):
             return {'message': "File extension is not allowed!"}, 400
 
         x = models.Photo(timestamp=timestamp, is_panorama=is_panorama)
@@ -51,10 +51,10 @@ class Photos(Resource):
         db.session.commit()
         return x.as_dict(), 201
 
-    def post(self):
-        args = self.postparser.parse_args()
-        return self.upload_photo(args['photo'], args['timestamp'],
-                                 args['is_panorama'])
+    @staticmethod
+    def _allowed_file(filename):
+        allowed_exts = app.config['PHOTOS_ALLOWED_EXTENSIONS']
+        return '.' in filename and filename.rsplit('.', 1)[1] in allowed_exts
 
     class Panorama(Resource):
         def get(self):
