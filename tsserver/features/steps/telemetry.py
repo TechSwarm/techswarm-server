@@ -4,7 +4,7 @@ from behave import *
 
 from tsserver import db
 from tsserver.dtutils import datetime_from_str, datetime_to_str
-from tsserver.telemetry.models import Telemetry
+from tsserver.genericapi.models import Telemetry
 
 
 example_telemetry_data = {
