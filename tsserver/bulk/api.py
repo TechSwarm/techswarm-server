@@ -3,8 +3,7 @@ from flask.ext.restful import Resource, abort
 
 class Bulk:
     """
-    A class that provides support for bulk retrieving and adding data (in one
-    request).
+    A class that provides support for bulk data retrieval (in one request).
     """
 
     actions = {}
@@ -16,16 +15,7 @@ class Bulk:
         """
         self.api = api
         self.BulkActions.actions = self.actions
-
-        # A resource added twice with different URLs and methods should work
-        # perfectly fine, but unfortunately Flask-RESTful calls as_view()
-        # internally in add_resource, which results in exception indicating
-        # that two different view function are going to be added as the same
-        # endpoint - that's why the endpoints here are different.
-        api.add_resource(self.BulkActions, '/bulk/<string:resources>',
-                         endpoint='bulk-get', methods=['GET', ])
-        api.add_resource(self.BulkActions, '/bulk/', endpoint='bulk-post',
-                         methods=['POST', ])
+        api.add_resource(self.BulkActions, '/bulk/<string:resources>')
 
     def add_resource(self, resource, url, name=None):
         """
@@ -57,6 +47,3 @@ class Bulk:
                 else:
                     abort(404)
             return response
-
-        def post(self):
-            abort(404)
