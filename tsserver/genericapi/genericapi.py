@@ -92,21 +92,27 @@ class CollectionGenericAPI(Resource):
         :type column: sqlalchemy.sql.schema.Column
         :return: None
         """
-        col_type = self._get_column_type(column)
-        if col_type is None:
-            raise ValueError('Column type "%s" is not recognized!' %
-                             column.type)
-        parser.add_argument(column.description, type=col_type, required=True)
+        parser.add_argument(column.description, required=True,
+                            **self._get_column_args(column))
 
-    def _get_column_type(self, column):
+    def _get_column_args(self, column):
         """
-        Return value type or the column
+        Return dict containing kwargs for add_argument method of
+        RequestParser for the column provided
 
         :type column: sqlalchemy.sql.schema.Column
-        :return: type
+        :rtype: dict
         """
         col_type = type(column.type)
-        if col_type == sqltypes.DateTime:
-            return timestamp
-        elif col_type == sqltypes.Float:
-            return float
+        args = {'type': (self.arg_types[col_type] if col_type in self.arg_types
+                         else column.type.python_type)}
+        if col_type == sqltypes.Enum:
+            args['choices'] = column.type.enums
+
+        return args
+
+    arg_types = {sqltypes.DateTime: timestamp,
+                 sqltypes.Enum: str}
+    """Dictionary that maps some kind of special SQL column types into Python
+    equivalents. If mapping for column type is not available in this
+    dictionary, `column.type.python_type` is used."""
