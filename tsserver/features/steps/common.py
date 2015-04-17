@@ -9,7 +9,7 @@ def step_impl(context, url):
 
 @then("{code:d} status code should be returned")
 def step_impl(context, code):
-    assert context.rv.status_code == code
+    assert context.rv.status_code == code, context.rv.status_code
 
 
 @then('"{key}" key in JSON data should be equal to "{text}"')
