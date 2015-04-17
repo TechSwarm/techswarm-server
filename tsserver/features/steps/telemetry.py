@@ -2,8 +2,8 @@ from datetime import datetime
 
 from behave import *
 
-from tsserver import db
-from tsserver.dtutils import datetime_from_str, datetime_to_str
+from tsserver.dtutils import datetime_to_str
+from tsserver.features.testutils import table_to_database
 from tsserver.genericapi.models import Telemetry
 
 
@@ -35,10 +35,4 @@ def step_impl(context, parameter):
 
 @given("following telemetry data")
 def step_impl(context):
-    for row in context.table:
-        d = dict(
-            (x, (datetime_from_str(y) if x == 'timestamp' else y)) for x, y in
-            row.as_dict().items())
-        x = Telemetry(**d)
-        db.session.add(x)
-    db.session.commit()
+    table_to_database(context.table, Telemetry)

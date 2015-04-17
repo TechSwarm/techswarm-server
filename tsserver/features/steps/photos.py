@@ -5,10 +5,10 @@ import shutil
 
 from behave import *
 
-from tsserver import db, configutils
+from tsserver import configutils
 from tsserver.dtutils import datetime_to_str
 from tsserver.features.testutils import (
-    open_resource, resource_path, parse_data_table_row
+    open_resource, resource_path, table_to_database
 )
 from tsserver.photos.models import Photo
 
@@ -26,11 +26,7 @@ def step_impl(context):
 
 @given("following photo data")
 def step_impl(context):
-    for row in context.table:
-        d = parse_data_table_row(row)
-        x = Photo(**d)
-        db.session.add(x)
-    db.session.commit()
+    table_to_database(context.table, Photo)
 
 
 @then("list of {num:d} object with image details should be sent")
