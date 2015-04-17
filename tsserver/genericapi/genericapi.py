@@ -5,65 +5,62 @@ from tsserver import db
 from tsserver.dtutils import timestamp
 
 
-class CollectionGenericAPI(Resource):
+class GenericAPI(Resource):
     """
-    Class that takes a model and automagically creates an API out
-    of it that provides GET (retrieve elements) and POST method (add new entry).
-    Should be used whenever an API for simple model is needed.
+    Base class for "Generic API" classes whose purpose is to automagically
+    create an API out of provided model that allows to retrieve and add data.
+    Generic API classes should be used whenever an API for simple model is
+    needed.
     """
 
     _model = None
     """The model to use to create API of."""
 
-    getparser = reqparse.RequestParser()
-    getparser.add_argument('since', type=timestamp)
+    get_parser = reqparse.RequestParser()
+    get_parser.add_argument('since', type=timestamp)
 
-    @staticmethod
-    def create(model):
+    @classmethod
+    def create(cls, model, name=None):
         """
-        Create new CollectionGenericAPI class for the model provided. Can be
-        used with `Api.add_resource()` like:
+        Create new GenericAPI class for the model provided. Can be used with
+        `Api.add_resource()` like:
 
-            api.add_resource(CollectionGenericAPI.create(Model), '/url')
+            api.add_resource(WhateverGenericAPI.create(Model), '/url')
 
         :param model: model to create API of
         :type model: db.Model
-        :rtype: CollectionGenericAPI
+        :param name: name for the class that's going to be created. Defaults
+            to `model.__name__`
+        :type name: str
+        :rtype: type
         """
-
-        class API(CollectionGenericAPI):
-            _model = model
-
-        # endpoint name is taken from __name__ by default, so set new value
-        # to avoid conflicts
-        API.__name__ = model.__name__
-        return API
+        if name is None:
+            name = model.__name__
+        return type(name, (cls,), {'_model': model})
 
     def __init__(self):
         self._post_parser = None
         super().__init__()
 
-    def get(self):
-        args = self.getparser.parse_args()
-        filter_args = []
-        if args['since'] is not None:
-            filter_args += [self._model.timestamp > args['since']]
-        return [x.as_dict() for x in
-                self._model.query.filter(*filter_args).all()]
+    def _create_element(self):
+        """
+        Parse arguments from post_parser and create new element out of it.
 
-    def post(self):
+        :return: created model instance
+        """
         args = self.post_parser.parse_args()
         x = self._model(**args)
         db.session.add(x)
         db.session.commit()
-        return x.as_dict(), 201
+        return x
 
     @property
     def post_parser(self):
         """
-        :class:`.RequestParser` to use with POST. Should parse all the
+        :class:`.RequestParser` to be used with POST/PUT. Should parse all the
         arguments needed to create new instance of a model.
-        :return:
+
+        :rtype: RequestParser
         """
         if self._post_parser is not None:
             return self._post_parser
@@ -116,3 +113,43 @@ class CollectionGenericAPI(Resource):
     """Dictionary that maps some kind of special SQL column types into Python
     equivalents. If mapping for column type is not available in this
     dictionary, `column.type.python_type` is used."""
+
+
+class CollectionGenericAPI(GenericAPI):
+    """
+    Generic API class that provides GET method, which retrieves list of
+    elements of model given, and POST method, which allows to add new element.
+    """
+
+    def get(self):
+        args = self.get_parser.parse_args()
+        filter_args = []
+        if args['since'] is not None:
+            filter_args += [self._model.timestamp > args['since']]
+        return [x.as_dict() for x in
+                self._model.query.filter(*filter_args).all()]
+
+    def post(self):
+        return self._create_element().as_dict(), 201
+
+
+class LatestElementGenericAPI(GenericAPI):
+    """
+    Generic API class that provides GET method, which retrieves the element
+    with latest timestamp in model given, and PUT method, which allows to add
+    new element (which actually replaces the current one if new timestamp is
+    greater than the old one).
+    """
+
+    @classmethod
+    def create(cls, model, name=None):
+        if name is None:
+            name = model.__name__ + '-latest'
+        return super(LatestElementGenericAPI, cls).create(model, name)
+
+    def get(self):
+        return (self._model.query.order_by(self._model.timestamp.desc())
+                .first_or_404()).as_dict()
+
+    def put(self):
+        return self._create_element().as_dict(), 201
