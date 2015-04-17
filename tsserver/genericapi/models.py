@@ -18,3 +18,14 @@ class Telemetry(db.Model):
         return {'timestamp': datetime_to_str(self.timestamp),
                 'temperature': self.temperature,
                 'pressure': self.pressure}
+
+
+class Status(db.Model):
+    timestamp = db.Column(db.DateTime, primary_key=True)
+    phase = db.Column(db.Enum('disconnected', 'launch_preparation',
+                              'countdown', 'launch', 'descend',
+                              'ground_operations', 'mission_complete'))
+
+    def as_dict(self):
+        return {'timestamp': datetime_to_str(self.timestamp),
+                'phase': self.phase}
