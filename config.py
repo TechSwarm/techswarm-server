@@ -14,3 +14,8 @@ PHOTOS_UPLOAD_FOLDER = '../files'
 
 # Allowed extensions for photos
 PHOTOS_ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
+
+# User credentials required to add data
+USERNAME = 'client'
+# Remember to change this (preferably to long random string) on production!
+PASSWORD = 'secret'

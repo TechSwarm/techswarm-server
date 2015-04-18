@@ -2,6 +2,7 @@ from flask.ext.restful import Resource, reqparse
 from sqlalchemy.sql import sqltypes
 
 from tsserver import db, inputtypes
+from tsserver.auth import requires_auth
 
 
 class GenericAPI(Resource):
@@ -145,6 +146,7 @@ class CollectionGenericAPI(GenericAPI, CollectionGET):
     elements of model given, and POST method, which allows to add new element.
     """
 
+    @requires_auth
     def post(self):
         return self._create_element().serializable, 201
 
@@ -167,5 +169,6 @@ class CurrentElementGenericAPI(GenericAPI):
         return (self._model.query.order_by(self._model.timestamp.desc())
                 .first_or_404()).serializable
 
+    @requires_auth
     def put(self):
         return self._create_element().serializable, 201

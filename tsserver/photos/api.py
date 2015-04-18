@@ -5,6 +5,7 @@ from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
 from tsserver import app, db, configutils
+from tsserver.auth import requires_auth
 from tsserver.genericapi import CollectionGET
 from tsserver.inputtypes import timestamp
 from tsserver.photos import models
@@ -19,6 +20,7 @@ class Photos(CollectionGET):
     postparser.add_argument('photo', type=FileStorage, location='files',
                             required=True)
 
+    @requires_auth
     def post(self):
         args = self.postparser.parse_args()
         return self.upload_photo(args['photo'], args['timestamp'],
@@ -55,6 +57,7 @@ class Photos(CollectionGET):
                         .order_by(models.Photo.timestamp.desc()).first_or_404())
             return panorama.serializable
 
+        @requires_auth
         def put(self):
             args = Photos.postparser.parse_args()
             return Photos.upload_photo(args['photo'], args['timestamp'], True)
