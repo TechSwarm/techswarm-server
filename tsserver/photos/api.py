@@ -5,27 +5,19 @@ from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
 from tsserver import app, db, configutils
+from tsserver.genericapi import CollectionGET
 from tsserver.inputtypes import timestamp
 from tsserver.photos import models
 
 
-class Photos(Resource):
-    getparser = reqparse.RequestParser()
-    getparser.add_argument('since', type=timestamp)
+class Photos(CollectionGET):
+    _model = models.Photo
 
     postparser = reqparse.RequestParser()
     postparser.add_argument('timestamp', type=timestamp, required=True)
     postparser.add_argument('is_panorama', type=bool, default=False)
     postparser.add_argument('photo', type=FileStorage, location='files',
                             required=True)
-
-    def get(self):
-        args = self.getparser.parse_args()
-        filter_args = []
-        if args['since'] is not None:
-            filter_args += [models.Photo.timestamp > args['since']]
-        return [x.serializable for x in
-                models.Photo.query.filter(*filter_args).all()]
 
     def post(self):
         args = self.postparser.parse_args()

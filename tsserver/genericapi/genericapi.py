@@ -15,9 +15,6 @@ class GenericAPI(Resource):
     _model = None
     """The model to use to create API of."""
 
-    get_parser = reqparse.RequestParser()
-    get_parser.add_argument('since', type=inputtypes.timestamp)
-
     @classmethod
     def create(cls, model, name=None):
         """
@@ -119,11 +116,19 @@ class GenericAPI(Resource):
     dictionary, `column.type.python_type` is used."""
 
 
-class CollectionGenericAPI(GenericAPI):
+class CollectionGET(Resource):
     """
-    Generic API class that provides GET method, which retrieves list of
-    elements of model given, and POST method, which allows to add new element.
+    Simple Resource that implements GET method and basically returns list of
+    objects of model provided. Also, it makes use of 'since' parameter,
+    which, if provided, causes only elements with later timestamp than it to
+    be returned.
     """
+
+    _model = None
+    """The model to use to create API of."""
+
+    get_parser = reqparse.RequestParser()
+    get_parser.add_argument('since', type=inputtypes.timestamp)
 
     def get(self):
         args = self.get_parser.parse_args()
@@ -132,6 +137,13 @@ class CollectionGenericAPI(GenericAPI):
             filter_args += [self._model.timestamp > args['since']]
         return [x.serializable for x in
                 self._model.query.filter(*filter_args).all()]
+
+
+class CollectionGenericAPI(GenericAPI, CollectionGET):
+    """
+    Generic API class that provides GET method, which retrieves list of
+    elements of model given, and POST method, which allows to add new element.
+    """
 
     def post(self):
         return self._create_element().serializable, 201
