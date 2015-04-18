@@ -133,7 +133,7 @@ class CollectionGenericAPI(GenericAPI):
         return self._create_element().serializable, 201
 
 
-class LatestElementGenericAPI(GenericAPI):
+class CurrentElementGenericAPI(GenericAPI):
     """
     Generic API class that provides GET method, which retrieves the element
     with latest timestamp in model given, and PUT method, which allows to add
@@ -144,8 +144,8 @@ class LatestElementGenericAPI(GenericAPI):
     @classmethod
     def create(cls, model, name=None):
         if name is None:
-            name = model.__name__ + '-latest'
-        return super(LatestElementGenericAPI, cls).create(model, name)
+            name = model.__name__ + '-current'
+        return super(CurrentElementGenericAPI, cls).create(model, name)
 
     def get(self):
         return (self._model.query.order_by(self._model.timestamp.desc())
