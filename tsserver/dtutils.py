@@ -28,7 +28,3 @@ def datetime_from_str(str):
     :rtype: datetime
     """
     return datetime.strptime(str, DT_FORMAT)
-
-
-# For use with RequestParser as argument type
-timestamp = datetime_from_str

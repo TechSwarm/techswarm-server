@@ -2,7 +2,7 @@ from flask.ext.restful import Resource, reqparse
 from sqlalchemy.sql import sqltypes
 
 from tsserver import db
-from tsserver.dtutils import timestamp
+from tsserver.inputtypes import timestamp
 
 
 class GenericAPI(Resource):

@@ -5,7 +5,7 @@ from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
 from tsserver import app, db, configutils
-from tsserver.dtutils import timestamp
+from tsserver.inputtypes import timestamp
 from tsserver.photos import models
 
 
