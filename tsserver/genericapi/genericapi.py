@@ -1,8 +1,7 @@
 from flask.ext.restful import Resource, reqparse
 from sqlalchemy.sql import sqltypes
 
-from tsserver import db
-from tsserver.inputtypes import timestamp
+from tsserver import db, inputtypes
 
 
 class GenericAPI(Resource):
@@ -17,7 +16,7 @@ class GenericAPI(Resource):
     """The model to use to create API of."""
 
     get_parser = reqparse.RequestParser()
-    get_parser.add_argument('since', type=timestamp)
+    get_parser.add_argument('since', type=inputtypes.timestamp)
 
     @classmethod
     def create(cls, model, name=None):
@@ -103,12 +102,17 @@ class GenericAPI(Resource):
         col_type = type(column.type)
         args = {'type': (self.arg_types[col_type] if col_type in self.arg_types
                          else column.type.python_type)}
+        if column.name == 'latitude':
+            args['type'] = inputtypes.latitude
+        elif column.name == 'longitude':
+            args['type'] = inputtypes.longitude
+
         if col_type == sqltypes.Enum:
             args['choices'] = column.type.enums
 
         return args
 
-    arg_types = {sqltypes.DateTime: timestamp,
+    arg_types = {sqltypes.DateTime: inputtypes.timestamp,
                  sqltypes.Enum: str}
     """Dictionary that maps some kind of special SQL column types into Python
     equivalents. If mapping for column type is not available in this

@@ -20,3 +20,9 @@ class Status(Model):
     phase = db.Column(db.Enum('disconnected', 'launch_preparation',
                               'countdown', 'launch', 'descend',
                               'ground_operations', 'mission_complete'))
+
+
+class GroundStationInfo(Model):
+    timestamp = db.Column(db.DateTime, primary_key=True)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)

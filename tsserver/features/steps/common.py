@@ -7,6 +7,11 @@ def step_impl(context, url):
     context.rv = context.request(url)
 
 
+@when("I {method} following data to {url}")
+def step_impl(context, method, url):
+    context.rv = context.request(url, method, data=context.table[0].as_dict())
+
+
 @then("{code:d} status code should be returned")
 def step_impl(context, code):
     assert context.rv.status_code == code, context.rv.status_code
