@@ -24,7 +24,7 @@ class Photos(Resource):
         filter_args = []
         if args['since'] is not None:
             filter_args += [models.Photo.timestamp > args['since']]
-        return [x.as_dict() for x in
+        return [x.serializable for x in
                 models.Photo.query.filter(*filter_args).all()]
 
     def post(self):
@@ -49,7 +49,7 @@ class Photos(Resource):
 
         x.filename = filename
         db.session.commit()
-        return x.as_dict(), 201
+        return x.serializable, 201
 
     @staticmethod
     def _allowed_file(filename):
@@ -61,7 +61,7 @@ class Photos(Resource):
             panorama = (models.Photo.query
                         .filter_by(is_panorama=True)
                         .order_by(models.Photo.timestamp.desc()).first_or_404())
-            return panorama.as_dict()
+            return panorama.serializable
 
         def put(self):
             args = Photos.postparser.parse_args()

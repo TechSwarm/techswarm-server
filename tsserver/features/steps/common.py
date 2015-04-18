@@ -33,3 +33,8 @@ def step_impl(context):
 @step('{header} header should be equal to "{value}"')
 def step_impl(context, header, value):
     assert context.rv.headers[header] == value
+
+
+@then("{value} should be returned")
+def step_impl(context, value):
+    assert context.rv == value

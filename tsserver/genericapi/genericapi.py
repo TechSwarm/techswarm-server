@@ -126,11 +126,11 @@ class CollectionGenericAPI(GenericAPI):
         filter_args = []
         if args['since'] is not None:
             filter_args += [self._model.timestamp > args['since']]
-        return [x.as_dict() for x in
+        return [x.serializable for x in
                 self._model.query.filter(*filter_args).all()]
 
     def post(self):
-        return self._create_element().as_dict(), 201
+        return self._create_element().serializable, 201
 
 
 class LatestElementGenericAPI(GenericAPI):
@@ -149,7 +149,7 @@ class LatestElementGenericAPI(GenericAPI):
 
     def get(self):
         return (self._model.query.order_by(self._model.timestamp.desc())
-                .first_or_404()).as_dict()
+                .first_or_404()).serializable
 
     def put(self):
-        return self._create_element().as_dict(), 201
+        return self._create_element().serializable, 201

@@ -23,7 +23,7 @@ def step_impl(context):
 @then("example telemetry data should be saved to the database")
 def step_impl(context):
     assert Telemetry.query.count() == 1
-    assert Telemetry.query.all()[0].as_dict() == example_telemetry_data
+    assert Telemetry.query.all()[0].serializable == example_telemetry_data
 
 
 @when("I POST example telemetry data without {parameter}")

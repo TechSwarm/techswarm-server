@@ -1,8 +1,8 @@
 from tsserver import db
-from tsserver.dtutils import datetime_to_str
+from tsserver.model import Model
 
 
-class Telemetry(db.Model):
+class Telemetry(Model):
     """
     All the data that is going to be obtained in regular time intervals
     (every second or so).
@@ -14,18 +14,9 @@ class Telemetry(db.Model):
     pressure = db.Column(db.Float)
     """Air pressure in hPa."""
 
-    def as_dict(self):
-        return {'timestamp': datetime_to_str(self.timestamp),
-                'temperature': self.temperature,
-                'pressure': self.pressure}
 
-
-class Status(db.Model):
+class Status(Model):
     timestamp = db.Column(db.DateTime, primary_key=True)
     phase = db.Column(db.Enum('disconnected', 'launch_preparation',
                               'countdown', 'launch', 'descend',
                               'ground_operations', 'mission_complete'))
-
-    def as_dict(self):
-        return {'timestamp': datetime_to_str(self.timestamp),
-                'phase': self.phase}
