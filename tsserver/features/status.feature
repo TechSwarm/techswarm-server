@@ -20,7 +20,17 @@ Feature: Mission status
     When I request /status/current
     Then 404 status code should be returned
 
+  Scenario Outline: Setting phase without authentication
+    When I request <url> via <method>
+    Then 401 status code should be returned
+
+    Examples:
+    | url             | method |
+    | /status         | POST   |
+    | /status/current | PUT    |
+
   Scenario Outline: Setting invalid phase
+    Given I am authenticated
     When I POST mission phase <phase> in 'phase' parameter to /status
     Then 400 status code should be returned
     When I PUT mission phase <phase> in 'phase' parameter to /status/current
@@ -34,7 +44,8 @@ Feature: Mission status
       | launh        |
 
   Scenario Outline: Setting phase
-    Given no status data in database
+    Given I am authenticated
+      And no status data in database
     When I POST mission phase <phase> in 'phase' parameter to /status
     Then 201 status code should be returned
     When I request /status/current

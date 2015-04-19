@@ -20,7 +20,17 @@ Feature: Ground station info
     When I request /gsinfo/current
     Then 404 status code should be returned
 
-  Scenario Outline: Setting invalid phase
+  Scenario Outline: Setting ground station info without authentication
+    When I request <url> via <method>
+    Then 401 status code should be returned
+
+    Examples:
+    | url             | method |
+    | /gsinfo         | POST   |
+    | /gsinfo/current | PUT    |
+
+  Scenario Outline: Setting invalid ground station info
+    Given I am authenticated
     When I POST following data to /gsinfo
       | timestamp                  | latitude   | longitude   |
       | 2015-06-01T12:13:22.777224 | <latitude> | <longitude> |
@@ -39,7 +49,8 @@ Feature: Ground station info
     | 100      | 200       |
 
   Scenario Outline: Sending ground station info
-    Given no ground station info in database
+    Given I am authenticated
+      And no ground station info in database
     When I POST following data to /gsinfo
       | timestamp                  | latitude   | longitude   |
       | 2015-06-01T12:13:22.777224 | <latitude> | <longitude> |

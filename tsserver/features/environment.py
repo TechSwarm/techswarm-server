@@ -1,11 +1,12 @@
+import base64
 import os
 import tempfile
 
 from flask import json
+from werkzeug.datastructures import Headers
 
 import tsserver
 from tsserver import configutils
-
 
 
 # If set to True, each time the test is run, new database is created as a
@@ -28,6 +29,18 @@ def before_scenario(context, scenario):
     tsserver.db.create_all()
     context.app = tsserver.app.test_client()
 
+    def authenticate(username=None, password=None):
+        if username is None and password is None:
+            username = tsserver.app.config['USERNAME']
+            password = tsserver.app.config['PASSWORD']
+
+        h = Headers()
+        val = 'Basic ' + base64.b64encode(
+            (username + ':' + password).encode('utf-8')
+        ).decode('utf-8')
+        h.add('Authorization', val)
+        context.additional_headers = h
+
     def request(url, method='GET', *args, **kwargs):
         """
         Wrapper over Flask.open function that parses returned data as JSON
@@ -36,10 +49,18 @@ def before_scenario(context, scenario):
         :param url: URL to retrieve
         :return: Response object
         """
-        rv = context.app.open(url, method=method, *args, **kwargs)
+        headers = Headers()
+        if 'additional_headers' in context:
+            headers.extend(context.additional_headers)
+        if 'headers' in kwargs:
+            headers.extend(kwargs['headers'])
+
+        rv = context.app.open(url, method=method, headers=headers, *args,
+                              **kwargs)
         rv.json_data = json.loads(rv.data)
         return rv
 
+    context.authenticate = authenticate
     context.request = request
 
 

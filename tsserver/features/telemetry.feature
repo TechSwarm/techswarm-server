@@ -36,12 +36,18 @@ Feature: Telemetry
     []
     """
 
+  Scenario: Adding data without authentication
+    When I request /telemetry via POST
+    Then 401 status code should be returned
+
   Scenario: Adding telemetry data
+    Given I am authenticated
     When I POST example telemetry data
     Then 201 status code should be returned
       And example telemetry data should be saved to the database
 
   Scenario Outline: Missing parameters when adding telemetry data
+    Given I am authenticated
     When I POST example telemetry data without <parameter>
     Then 400 status code should be returned
 

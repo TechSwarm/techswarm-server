@@ -22,7 +22,12 @@ Feature: Photos
     []
     """
 
+  Scenario: Uploading photo without authentication
+    When I request /photos via POST
+    Then 401 status code should be returned
+
   Scenario: Uploading a photo
+    Given I am authenticated
     When I upload an image to /photos
     Then 201 status code should be returned
       And JSON with image details should be sent
@@ -33,6 +38,7 @@ Feature: Photos
   # Depends on config, but you are not going to allow uploading photos with
   # .php extension, are you?
   Scenario Outline: Uploading a file with dangerous extension
+    Given I am authenticated
     When I upload a file with '<extension>' extension to /photos
     Then 400 status code should be returned
       And "message" key in JSON data should be equal to "File extension is not allowed!"

@@ -33,7 +33,12 @@ Feature: Panorama photos
       # in the database
       And "filename" key in JSON data should be equal to "test002.jpg"
 
+  Scenario: Setting phase without authentication
+    When I request /panorama via PUT
+    Then 401 status code should be returned
+
   Scenario: Uploading a panorama
+    Given I am authenticated
     When I upload a panorama via PUT to /panorama
     Then 201 status code should be returned
       And JSON with image details should be sent

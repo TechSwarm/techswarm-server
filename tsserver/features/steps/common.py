@@ -7,6 +7,11 @@ def step_impl(context, url):
     context.rv = context.request(url)
 
 
+@when("I request {url:S} via {method}")
+def step_impl(context, url, method):
+    context.rv = context.request(url, method)
+
+
 @when("I {method} following data to {url}")
 def step_impl(context, method, url):
     context.rv = context.request(url, method, data=context.table[0].as_dict())
@@ -43,3 +48,8 @@ def step_impl(context, header, value):
 @then("{value} should be returned")
 def step_impl(context, value):
     assert context.rv == value
+
+
+@given("I am authenticated")
+def step_impl(context):
+    context.authenticate()
