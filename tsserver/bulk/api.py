@@ -6,7 +6,7 @@ class Bulk:
     A class that provides support for bulk data retrieval (in one request).
     """
 
-    actions = {}
+    resources = {}
     """List of resources available for bulk actions"""
 
     def __init__(self, api):
@@ -14,8 +14,8 @@ class Bulk:
         :type api: flask.ext.restful.Api
         """
         self.api = api
-        self.BulkActions.actions = self.actions
-        api.add_resource(self.BulkActions, '/bulk/<string:resources>')
+        self.BulkResource.actions = self.resources
+        api.add_resource(self.BulkResource, '/bulk/<string:resources>')
 
     def add_resource(self, resource, url, name=None):
         """
@@ -32,9 +32,9 @@ class Bulk:
         if name is None:
             name = resource.__name__.lower()
         self.api.add_resource(resource, url, endpoint=name)
-        self.actions[name] = resource
+        self.resources[name] = resource
 
-    class BulkActions(Resource):
+    class BulkResource(Resource):
         def get(self, resources):
             """
             :param resources: Comma-separated list of resources to get
