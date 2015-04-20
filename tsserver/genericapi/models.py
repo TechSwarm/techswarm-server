@@ -40,6 +40,34 @@ class SHT(Model):
     temperature = db.Column(db.Numeric(5, 2))
 
 
+class GPS(Model):
+    """
+    Data from GPS.
+    """
+    timestamp = db.Column(db.DateTime, primary_key=True)
+
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    # meters
+    altitude = db.Column(db.Float)
+
+    quality = db.Column(db.Enum('no_fix', 'gps', 'dgps'))
+
+    # km/h
+    speed_over_ground = db.Column(db.Float)
+
+    # Dilution Of Precision
+    fix_type = db.Column(db.Enum('no_fix', '2d', '3d'))
+    pdop = db.Column(db.Float)
+    hdop = db.Column(db.Float)
+    vdop = db.Column(db.Float)
+
+    # SmallInteger is kind of overkill, but SQLAlchemy does not support
+    # TINYINTs...
+    active_satellites = db.Column(db.SmallInteger)
+    satellites_in_view = db.Column(db.SmallInteger)
+
+
 class Status(Model):
     timestamp = db.Column(db.DateTime, primary_key=True)
     phase = db.Column(db.Enum('disconnected', 'launch_preparation',
