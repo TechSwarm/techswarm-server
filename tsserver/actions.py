@@ -2,10 +2,7 @@ from tsserver import api
 from tsserver.bulk.api import Bulk
 from tsserver.genericapi import CollectionGenericAPI, CurrentElementGenericAPI
 from tsserver.photos.api import Photos
-from tsserver.genericapi.models import (
-    Telemetry, Status, GroundStationInfo, IMU, SHT
-)
-
+from tsserver.genericapi.models import Status, GroundStationInfo, IMU, SHT
 
 bulk = Bulk(api)
 
@@ -24,6 +21,5 @@ api.add_resource(Photos, '/photos')
 api.add_resource(Photos.Panorama, '/panorama')
 
 # Other
-bulk.add_resource(CollectionGenericAPI.create(Telemetry), '/telemetry')
 bulk.add_resource(CollectionGenericAPI.create(IMU), '/imu')
 bulk.add_resource(CollectionGenericAPI.create(SHT), '/sht')
