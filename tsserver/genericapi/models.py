@@ -40,6 +40,19 @@ class IMU(Model):
     pressure = db.Column(db.Integer)
 
 
+class SHT(Model):
+    """
+    Model to store reading from SHT sensor (humidity + temperature).
+    """
+    timestamp = db.Column(db.DateTime, primary_key=True)
+
+    # 0 to 100%, resolution 0.04%
+    humidity = db.Column(db.Numeric(5, 2))
+
+    # -40 to 125°C, resolution 0.01°C
+    temperature = db.Column(db.Numeric(5, 2))
+
+
 class Status(Model):
     timestamp = db.Column(db.DateTime, primary_key=True)
     phase = db.Column(db.Enum('disconnected', 'launch_preparation',
