@@ -1,6 +1,4 @@
-from datetime import datetime
 from tsserver import db
-from tsserver.dtutils import datetime_to_str
 from tsserver.strutils import to_camel_case
 
 
@@ -33,10 +31,7 @@ class Model(db.Model):
         """
         d = {}
         for column in self.__table__.columns:
-            val = getattr(self, column.name)
-            if isinstance(val, datetime):
-                val = datetime_to_str(val)
-            d[to_camel_case(column.name)] = val
+            d[to_camel_case(column.name)] = getattr(self, column.name)
 
         try:
             d['url'] = self.resource_url
