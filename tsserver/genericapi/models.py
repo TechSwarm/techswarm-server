@@ -68,10 +68,10 @@ class GPS(Model):
     satellites_in_view = db.Column(db.SmallInteger)
 
 
-class Calculations(Model):
+class PlanetaryData(Model):
     """
-    All data that is going to be calculated out of sensors' outputs (most of
-    it after landing on the ground).
+    All data about the planet that is going to be calculated out of sensors'
+    outputs (most of it after landing).
     """
     timestamp = db.Column(db.DateTime, primary_key=True)
 

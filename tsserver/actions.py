@@ -3,7 +3,7 @@ from tsserver.bulk.api import Bulk
 from tsserver.genericapi import CollectionGenericAPI, CurrentElementGenericAPI
 from tsserver.photos.api import Photos
 from tsserver.genericapi.models import (
-    Status, GroundStationInfo, IMU, SHT, GPS, Calculations
+    Status, GroundStationInfo, IMU, SHT, GPS, PlanetaryData
 )
 
 bulk = Bulk(api)
@@ -26,6 +26,6 @@ api.add_resource(Photos.Panorama, '/panorama')
 bulk.add_resource(CollectionGenericAPI.create(IMU), '/imu')
 bulk.add_resource(CollectionGenericAPI.create(SHT), '/sht')
 bulk.add_resource(CollectionGenericAPI.create(GPS), '/gps')
-bulk.add_resource(CollectionGenericAPI.create(Calculations,
+bulk.add_resource(CollectionGenericAPI.create(PlanetaryData,
                                               arguments_required=False),
-                  '/calculations')
+                  '/planetarydata')
