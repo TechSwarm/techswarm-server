@@ -68,6 +68,26 @@ class GPS(Model):
     satellites_in_view = db.Column(db.SmallInteger)
 
 
+class Calculations(Model):
+    """
+    All data that is going to be calculated out of sensors' outputs (most of
+    it after landing on the ground).
+    """
+    timestamp = db.Column(db.DateTime, primary_key=True)
+
+    # kilograms
+    planet_mass = db.Column(db.Float)
+    # kilometers
+    planet_radius = db.Column(db.Float)
+    # g/cm³
+    planet_density = db.Column(db.Float)
+
+    # km/sec
+    escape_velocity = db.Column(db.Float)
+
+    earth_similarity_index = db.Column(db.Float)
+
+
 class Status(Model):
     timestamp = db.Column(db.DateTime, primary_key=True)
     phase = db.Column(db.Enum('disconnected', 'launch_preparation',

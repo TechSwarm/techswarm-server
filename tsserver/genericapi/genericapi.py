@@ -1,4 +1,5 @@
 from flask.ext.restful import Resource, reqparse
+from sqlalchemy.orm import make_transient
 from sqlalchemy.sql import sqltypes
 
 from tsserver import db, inputtypes
@@ -16,8 +17,11 @@ class GenericAPI(Resource):
     _model = None
     """The model to use to create API of."""
 
+    arguments_required = True
+    """Whether the arguments are required."""
+
     @classmethod
-    def create(cls, model, name=None):
+    def create(cls, model, name=None, arguments_required=True):
         """
         Create new GenericAPI class for the model provided. Can be used with
         `Api.add_resource()` like:
@@ -29,11 +33,16 @@ class GenericAPI(Resource):
         :param name: name for the class that's going to be created. Defaults
             to `model.__name__`
         :type name: str
+        :param arguments_required: whether all the arguments should be
+            required. If false, default values for new elements will be taken
+            from the element with latest timestamp.
+        :type arguments_required: bool
         :rtype: type
         """
         if name is None:
             name = model.__name__
-        return type(name, (cls,), {'_model': model})
+        return type(name, (cls,), {'_model': model,
+                                   'arguments_required': arguments_required})
 
     def __init__(self):
         self._post_parser = None
@@ -46,7 +55,22 @@ class GenericAPI(Resource):
         :return: created model instance
         """
         args = self.post_parser.parse_args()
+
         x = self._model(**args)
+        # Only non-None arguments, to make len() working properly
+        args = dict([(x, y) for x, y in args.items() if y])
+        if (not self.arguments_required
+                and (len(self._model.__table__.columns) != len(args))):
+            # If request does not contain all arguments needed to create the
+            # model, then retrieve the element with latest timestamp and
+            # create a new one out of it
+            x = self._model.query.order_by(self._model.timestamp.desc()).first()
+            if x is not None:
+                make_transient(x)
+                for k, v in args.items():
+                    if v:
+                        setattr(x, k, v)
+
         db.session.add(x)
         db.session.commit()
         return x
@@ -86,7 +110,8 @@ class GenericAPI(Resource):
         :type column: sqlalchemy.sql.schema.Column
         :return: None
         """
-        parser.add_argument(column.description, required=True,
+        parser.add_argument(column.description,
+                            required=self.arguments_required,
                             **self._get_column_args(column))
 
     def _get_column_args(self, column):
