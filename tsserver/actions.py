@@ -19,7 +19,7 @@ api.add_resource(CurrentElementGenericAPI.create(GroundStationInfo),
                  '/gsinfo/current', endpoint='gsinfo-current')
 
 # Photos
-api.add_resource(Photos, '/photos')
+bulk.add_resource(Photos, '/photos')
 api.add_resource(Photos.Panorama, '/panorama')
 
 # Other
