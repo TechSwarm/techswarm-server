@@ -76,11 +76,17 @@ Available actions:
   exactly the same as when using POST on `/photos`, except that `is_panorama` 
   value is forced to be True
 
+Returned JSONs with Photo data include URL of the image file in "url" key.
+
 ### Common GET parameters
 * `since` parameter, whose value is datetime in format standard for 
   timestamps (see section below) can be used to retrieve elements with 
   `timestamp` higher than the value of the parameter. It is the preferred way
    to get model updates since specified point in time.
+
+### POST/PUT behavior
+Both POST and PUT responses include JSON representation of the newly added 
+object.
 
 ### Timestamps
 All models have `timestamp` column. Internally in database it is stored as 
@@ -90,6 +96,15 @@ ISO 8601 without timezone info was chosen as a format for both use cases. In
 other words, the format is:
 
 `%Y-%m-%dT%H:%M:%S.%f`
+
+### Status codes
+* All GET requests should return 200 OK status code. Everything else is an 
+  error. 
+* All POST and PUT requests should return 201 CREATED status code. Everything
+  else is an error.
+* 400 BAD REQUEST is often returned when parameter values are invalid.
+* In case of errors, value of "message" in returned JSON may be helpful in 
+  identifying the cause.
 
 ### Authentication
 All POST or PUT requests *must* use HTTP basic authentication, otherwise 401 
@@ -113,6 +128,16 @@ what would GET normally provide. In other words - what, for instance, would
 
 Bulk retrieval can be used with GET parameters, like `since`, as well - in this 
 case, the parameter is passed to all models.
+
+List of models which can be "bulk retrieved":
+
+* `status`
+* `gsinfo`
+* `photo`
+* `imu`
+* `sht`
+* `gps`
+* `planetarydata`
 
 ### Tests
 Since techswarm-server uses BDD framework for testing, and therefore, 
