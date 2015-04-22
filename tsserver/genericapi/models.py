@@ -90,9 +90,10 @@ class PlanetaryData(Model):
 
 class Status(Model):
     timestamp = db.Column(db.DateTime, primary_key=True)
-    phase = db.Column(db.Enum('disconnected', 'launch_preparation',
+    phase = db.Column(db.Enum('none', 'launch_preparation',
                               'countdown', 'launch', 'descend',
                               'ground_operations', 'mission_complete'))
+    connected = db.Column(db.Boolean)
 
 
 class GroundStationInfo(Model):
