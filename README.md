@@ -11,10 +11,12 @@ pip install -r requirements.txt
 python install.py
 python runserver.py
 ```
-techswarm-server uses SQLite database (named database.db, stored in server root directory) by default. Database settings can be changed in `config.py` file.
+techswarm-server uses SQLite database (named database.db, stored in server root
+directory) by default. Database settings can be changed in `config.py` file.
 
 ## Testing
-TechSwarm Ground Station Server uses [behave](http://pythonhosted.org/behave/) BDD framework.
+TechSwarm Ground Station Server uses [behave](http://pythonhosted.org/behave/)
+BDD framework.
 
 All packages required by the server to be tested can be installed using:
 
@@ -22,13 +24,15 @@ All packages required by the server to be tested can be installed using:
 pip install -r requirements-testing.txt
 ```
 
-Then, testing framework can be started in server root directory (the one with `runserver.py`) via:
+Then, testing framework can be started in server root directory (the one with
+`runserver.py`) via:
 
 ```
 behave tsserver/features
 ```
 
-Tests use in-memory SQLite database by default. There is also an option to use temporary database file instead - see `features/environment.py` for that.
+Tests use in-memory SQLite database by default. There is also an option to use
+temporary database file instead - see `features/environment.py` for that.
 
 ## Usage
 ### So-called generic models
@@ -113,7 +117,7 @@ status code is returned. Valid username and password are stored in `config.py`.
 ### Bulk retrieval
 * `/bulk/<comma-separated list of models to get>`
 
-Data from multiple models can be retrived in single request using Bulk 
+Data from multiple models can be retrieved in single request using Bulk
 retrieval. By and large it gets data from each model, and then packs it to 
 single JSON object, with key names equal to model names, and values equal to 
 what would GET normally provide. In other words - what, for instance, would 
