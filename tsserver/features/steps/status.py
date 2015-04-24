@@ -22,5 +22,6 @@ def step_impl(context):
 def step_impl(context, method, phase, parameter, url):
     context.rv = context.request(url, method, data={
         'timestamp': datetime_to_str(datetime(2000, 1, 1)),
+        'connected': True,
         parameter: phase
     })

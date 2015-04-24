@@ -58,7 +58,7 @@ Feature: Mission status
 
     Examples:
       | phase              |
-      | disconnected       |
+      | none               |
       | launch_preparation |
       | countdown          |
       | launch             |
