@@ -53,6 +53,8 @@ class GPS(Model):
 
     quality = db.Column(db.Enum('no_fix', 'gps', 'dgps'))
 
+    # degrees relative to north aka track made good
+    direction = db.Column(db.Float)
     # km/h
     speed_over_ground = db.Column(db.Float)
 
