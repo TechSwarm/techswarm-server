@@ -20,8 +20,14 @@ class GenericAPI(Resource):
     arguments_required = True
     """Whether the arguments are required."""
 
+    defaults_to_last = False
+    """If arguments_required is False and this is True, then when a certain
+    column value is not provided, then it's taken from the element with latest
+    timestamp."""
+
     @classmethod
-    def create(cls, model, name=None, arguments_required=True):
+    def create(cls, model, name=None, arguments_required=True,
+               defaults_to_last=False):
         """
         Create new GenericAPI class for the model provided. Can be used with
         `Api.add_resource()` like:
@@ -34,15 +40,22 @@ class GenericAPI(Resource):
             to `model.__name__`
         :type name: str
         :param arguments_required: whether all the arguments should be
-            required. If false, default values for new elements will be taken
-            from the element with latest timestamp.
+            required. See description of defaults_to_last argument for more
+            explanation of what happens when this is set to False
         :type arguments_required: bool
+        :param defaults_to_last: if arguments_required is set to True, value of
+            this parameter is ignored. Otherwise, if this is set to True, then
+            default values for new elements will be taken from the element with
+            latest timestamp. If this is set to False, then column's default
+            value is taken (usually NULL).
+        :type defaults_to_last: bool
         :rtype: type
         """
         if name is None:
             name = model.__name__
         return type(name, (cls,), {'_model': model,
-                                   'arguments_required': arguments_required})
+                                   'arguments_required': arguments_required,
+                                   'defaults_to_last': defaults_to_last})
 
     def __init__(self):
         self._post_parser = None
@@ -59,7 +72,7 @@ class GenericAPI(Resource):
         x = self._model(**args)
         # Only non-None arguments, to make len() working properly
         args = dict([(x, y) for x, y in args.items() if y])
-        if (not self.arguments_required
+        if (not self.arguments_required and self.defaults_to_last
                 and (len(self._model.__table__.columns) != len(args))):
             # If request does not contain all arguments needed to create the
             # model, then retrieve the element with latest timestamp and
@@ -123,8 +136,7 @@ class GenericAPI(Resource):
         :rtype: dict
         """
         col_type = type(column.type)
-        args = {'type': (self.arg_types[col_type] if col_type in self.arg_types
-                         else column.type.python_type)}
+        args = {'type': self.arg_types.get(col_type, column.type.python_type)}
         if column.name == 'latitude':
             args['type'] = inputtypes.latitude
         elif column.name == 'longitude':

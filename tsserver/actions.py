@@ -25,7 +25,8 @@ api.add_resource(Photos.Panorama, '/panorama')
 # Other
 bulk.add_resource(CollectionGenericAPI.create(IMU), '/imu')
 bulk.add_resource(CollectionGenericAPI.create(SHT), '/sht')
-bulk.add_resource(CollectionGenericAPI.create(GPS), '/gps')
-bulk.add_resource(CollectionGenericAPI.create(PlanetaryData,
-                                              arguments_required=False),
-                  '/planetarydata')
+bulk.add_resource(CollectionGenericAPI.create(GPS, arguments_required=False),
+                  '/gps')
+bulk.add_resource(
+    CollectionGenericAPI.create(PlanetaryData, arguments_required=False,
+                                defaults_to_last=True), '/planetarydata')
