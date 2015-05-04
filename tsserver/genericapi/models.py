@@ -92,6 +92,10 @@ class PlanetaryData(Model):
 
 class Status(Model):
     timestamp = db.Column(db.DateTime, primary_key=True)
+
+    # sec (countdown as negative)
+    mission_time = db.Column(db.Float)
+
     phase = db.Column(db.Enum('none', 'launch_preparation',
                               'countdown', 'launch', 'descend',
                               'ground_operations', 'mission_complete'))
