@@ -5,7 +5,7 @@
 virtualenv -p python3 server
 cd server
 source bin/activate
-git clone https://github.com/m4tx/techswarm-server.git
+git clone https://github.com/TechSwarm/techswarm-server.git
 cd techswarm-server
 pip install -r requirements.txt
 python install.py
